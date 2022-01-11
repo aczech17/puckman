@@ -1,7 +1,8 @@
-#from Rectangle import Rectangle
+# from Rectangle import Rectangle
 import pygame.image
 
 from Actor import Actor as Actor
+import sys
 
 
 class Puckman(Actor):
@@ -16,9 +17,16 @@ class Puckman(Actor):
             'down': 'assets//puckman_down.png'
         }
 
+    def open_puckman_image(self, directory):
+        try:
+            img = pygame.image.load(directory)
+        except FileNotFoundError:
+            sys.exit(f"Could not open {directory}")
+        return img
+
     def control(self, x, y, direction):
         asset_directory = self._assets[direction]
-        self._image = pygame.image.load(asset_directory)
+        self._image = self.open_puckman_image(asset_directory)
         self.move(x, y)
         if self.right() > self._screen_width:
             self.set_position(left=0, top=self.top())
@@ -28,4 +36,3 @@ class Puckman(Actor):
             self.set_position(left=self.left(), top=self._screen_height - self.height())
         if self.top() > self._screen_height:
             self.set_position(left=self.left(), top=0)
-
