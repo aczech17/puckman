@@ -28,6 +28,6 @@ class Puckman(Actor):
             self.set_position(left=self._screen_width - self.width(), top=self.top())
         if self.top() < 0:
             self.set_position(left=self.left(), top=self._screen_height - self.height())
-        if self.top() > self._screen_height:
+        if self.down() > self._screen_height:
             self.set_position(left=self.left(), top=0)
 
