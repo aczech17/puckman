@@ -59,12 +59,6 @@ class Game:
     def generate_dots(self):
         pass
 
-    def open_puckman_image(self, directory="assets/puckman_small.png"):
-        try:
-            img = pygame.image.load(directory)
-        except FileNotFoundError:
-            sys.exit(f"Could not open {directory}")
-        return img
 
     def play(self):
         pygame.init()
@@ -74,7 +68,8 @@ class Game:
         screen = self._screen
         pygame.display.set_caption("Puckman")
 
-        puckman = Puckman(left=10, top=10, directory="assets/puckman_right.png", screen_width=self.screen_width(), screen_height=self.screen_height())
+        puckman = Puckman(left=10, top=10, directory="assets/puckman_right.png", screen_width=self.screen_width(),
+                          screen_height=self.screen_height())
 
         game_open = True
         while game_open:

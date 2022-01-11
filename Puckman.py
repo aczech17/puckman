@@ -16,9 +16,11 @@ class Puckman(Actor):
             'down': 'assets//puckman_down.png'
         }
 
+
+
     def control(self, x, y, direction):
         asset_directory = self._assets[direction]
-        self._image = pygame.image.load(asset_directory)
+        self._image = self.open_image(asset_directory)
         self.move(x, y)
         if self.right() > self._screen_width:
             self.set_position(left=0, top=self.top())

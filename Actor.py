@@ -6,12 +6,18 @@ class Actor:
     def __init__(self, left, top, directory):
         self._left = left
         self._top = top
-        try:
-            self._image = pygame.image.load(directory)
-        except FileNotFoundError:
-            sys.exit(f"Could not open {directory}.")
+        self._image = self.open_image(directory)
         self._width = self._image.get_width()
         self._height = self._image.get_height()
+
+
+    def open_image(self, directory):
+        try:
+            img = pygame.image.load(directory)
+        except FileNotFoundError:
+            sys.exit(f"Could not open {directory}")
+        return img
+
 
     def width(self):
         return self._width
