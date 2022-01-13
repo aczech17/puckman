@@ -1,12 +1,12 @@
-#from Puckman import Puckman
-#from Rectangle import Rectangle
+# from Puckman import Puckman
+# from Rectangle import Rectangle
 
 import pygame
 import sys
 from PIL import Image
 
-from Actor import Actor
 from Puckman import Puckman
+
 
 class Game:
     """
@@ -59,13 +59,9 @@ class Game:
     def generate_dots(self):
         pass
 
-
     def play(self):
         pygame.init()
-        screen_width = self._screen_width
-        screen_height = self._screen_height
-        self._screen = pygame.display.set_mode((screen_width, screen_height))
-        screen = self._screen
+        self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
         pygame.display.set_caption("Puckman")
 
         puckman = Puckman(left=10, top=10, directory="assets/puckman_right.png", screen_width=self.screen_width(),
@@ -87,7 +83,7 @@ class Game:
             if keys[pygame.K_DOWN]:
                 puckman.control(0, 0.5, 'down')
 
-            screen.fill((0, 0, 0))
-            puckman.draw(screen)
+            self._screen.fill((0, 0, 0))
+            puckman.draw(self._screen)
             pygame.display.flip()
         self.close()

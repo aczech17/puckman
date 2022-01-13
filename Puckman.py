@@ -1,12 +1,8 @@
-#from Rectangle import Rectangle
-import pygame.image
-
-from Actor import Actor as Actor
+from Movable import Movable
 
 
-class Puckman(Actor):
+class Puckman(Movable):
     def __init__(self, left, top, directory, screen_width, screen_height):
-        super().__init__(left, top, directory)
         self._screen_width = screen_width
         self._screen_height = screen_height
         self._assets = {
@@ -15,12 +11,14 @@ class Puckman(Actor):
             'up': 'assets//puckman_up.png',
             'down': 'assets//puckman_down.png'
         }
-
-
+        self._current_direction = 'right'
+        directory = self._assets[self._current_direction]
+        super().__init__(left, top, directory)
 
     def control(self, x, y, direction):
-        asset_directory = self._assets[direction]
-        self._image = self.open_image(asset_directory)
+        if direction != self._current_direction:
+            asset_directory = self._assets[direction]
+            self._image = self.open_image(asset_directory)
         self.move(x, y)
         if self.right() > self._screen_width:
             self.set_position(left=0, top=self.top())
@@ -30,4 +28,3 @@ class Puckman(Actor):
             self.set_position(left=self.left(), top=self._screen_height - self.height())
         if self.down() > self._screen_height:
             self.set_position(left=self.left(), top=0)
-
