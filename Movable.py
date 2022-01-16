@@ -28,7 +28,7 @@ class Movable(Object):
         left = self.left()
         right = self.right()
         future_top = self.top() - self.speed()
-        future_down = self.top() + self.speed()
+        future_down = self.down() + self.speed()
         future_left = self.left() - self.speed()
         future_right = self.right() + self.speed()
 

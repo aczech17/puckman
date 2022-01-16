@@ -47,13 +47,17 @@ class Game:
         return self._screen_height
 
     def generate_obstacles(self):
-        obst = Object(left=10, top=10, directory="assets//obstacle_big.png")
-        return [obst]
+        obst1 = Object(left=10, top=10, directory="assets//obstacle_horizontal_big.png")
+        obst2 = Object(left=10, top=500, directory="assets//obstacle_horizontal_big.png")
+        obst3 = Object(left=10, top=30, directory="assets//obstacle_vertical_big.png")
+        obst4 = Object(left=790, top=30, directory="assets//obstacle_vertical_big.png")
+        return [obst1, obst2, obst3, obst4]
 
     def generate_dots(self):
         dot1 = Object(left=50, top=50, directory="assets/dot.png")
         dot2 = Object(left=100, top=50, directory="assets/dot.png")
-        return [dot1, dot2]
+        dot3 = Object(left=150, top=100, directory="assets/dot.png")
+        return [dot1, dot2, dot3]
 
     def draw_everything(self):
         self._puckman.draw(self._screen)
@@ -61,13 +65,18 @@ class Game:
             dot.draw(self._screen)
         for obstacle in self._obstacles:
             obstacle.draw(self._screen)
+        myfont = pygame.font.SysFont('Comic Sans MS', 30)
+        textsurface = myfont.render(f"Punkty xD: {self._points}", False, (255, 255, 255))
+        self._screen.blit(textsurface, (0, 0))
 
     def play(self):
         pygame.init()
+        pygame.font.init()
+
         self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
         pygame.display.set_caption("Puckman")
 
-        self._puckman = Puckman(left=10, top=150, directory="assets/puckman_right.png", direction='stop', speed=0.25,
+        self._puckman = Puckman(left=150, top=150, directory="assets/puckman_right.png", direction='stop', speed=0.25,
                                 screen=self)
 
         game_open = True
@@ -106,5 +115,4 @@ class Game:
         for obstacle in self._obstacles:
             if puckman.will_collide_with(obstacle):
                 self._puckman.control('stop')
-                break # ?
-
+                break  # ?
