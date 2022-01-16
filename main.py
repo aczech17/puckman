@@ -2,7 +2,7 @@ from Game import Game
 
 
 def main():
-    game = Game(screen_width=800, screen_height=600)
+    game = Game(screen_width=1000, screen_height=800)
     game.play()
 
 

@@ -35,14 +35,10 @@ class Object:
     def down(self):
         return self._top + self._height
 
-    def collides_with_point(self, point):
+    """def _collides_with_point(self, point):
         x = point[0]
         y = point[1]
-        return self.left() <= x <= self.right() and self.top() <= y <= self.down()
-
-    def collides_with(self, an_object):
-        return (self.left() < an_object.right() and self.right() > an_object.left() and
-                self.top() < an_object.down() and self.down() > an_object.top())
+        return self.left() <= x <= self.right() and self.top() <= y <= self.down()"""
 
     def draw(self, screen):
         screen.blit(self._image, (self._left, self._top))

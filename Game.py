@@ -47,7 +47,8 @@ class Game:
         return self._screen_height
 
     def generate_obstacles(self):
-        return []
+        obst = Object(left=10, top=10, directory="assets//obstacle_big.png")
+        return [obst]
 
     def generate_dots(self):
         dot1 = Object(left=50, top=50, directory="assets/dot.png")
@@ -66,8 +67,8 @@ class Game:
         self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
         pygame.display.set_caption("Puckman")
 
-        self._puckman = Puckman(left=10, top=10, directory="assets/puckman_right.png", screen_width=self.screen_width(),
-                                screen_height=self.screen_height())
+        self._puckman = Puckman(left=10, top=150, directory="assets/puckman_right.png", direction='stop', speed=0.25,
+                                screen=self)
 
         game_open = True
         while game_open:
@@ -96,7 +97,14 @@ class Game:
         self.close()
 
     def check_for_collisions(self):
+        puckman = self._puckman
         for dot in self._dots:
-            if dot.collides_with(self._puckman):
+            if puckman.will_collide_with(dot):
                 self._points += 1
                 self._dots.remove(dot)
+
+        for obstacle in self._obstacles:
+            if puckman.will_collide_with(obstacle):
+                self._puckman.control('stop')
+                break # ?
+
