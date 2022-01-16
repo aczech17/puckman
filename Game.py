@@ -1,10 +1,6 @@
-# from Puckman import Puckman
-# from Rectangle import Rectangle
-
 import pygame
-import sys
-from PIL import Image
 
+from Object import Object
 from Puckman import Puckman
 
 
@@ -14,24 +10,21 @@ class Game:
     :param: dots
     """
 
-    def __init__(self, obstacles=None, dots=None, screen_width=800, screen_height=600):
-        if obstacles is None:
-            self._obstacles = []
-        else:
-            self._obstacles = obstacles
-
-        if dots is None:
-            self._dots = []
-        else:
-            self._dots = dots
+    def __init__(self, screen_width=800, screen_height=600):
+        self._obstacles = self.generate_obstacles()
+        self._dots = self.generate_dots()
 
         self._screen_width = screen_width
         self._screen_height = screen_height
         self._screen = None
-        # self.play()
+        self._puckman = None
+        self._points = 0
 
     def close(self):
         pygame.display.quit()
+
+    def points(self):
+        return self._points
 
     def obstacles(self):
         return self._obstacles
@@ -54,18 +47,27 @@ class Game:
         return self._screen_height
 
     def generate_obstacles(self):
-        pass
+        return []
 
     def generate_dots(self):
-        pass
+        dot1 = Object(left=50, top=50, directory="assets/dot.png")
+        dot2 = Object(left=100, top=50, directory="assets/dot.png")
+        return [dot1, dot2]
+
+    def draw_everything(self):
+        self._puckman.draw(self._screen)
+        for dot in self._dots:
+            dot.draw(self._screen)
+        for obstacle in self._obstacles:
+            obstacle.draw(self._screen)
 
     def play(self):
         pygame.init()
         self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
         pygame.display.set_caption("Puckman")
 
-        puckman = Puckman(left=10, top=10, directory="assets/puckman_right.png", screen_width=self.screen_width(),
-                          screen_height=self.screen_height())
+        self._puckman = Puckman(left=10, top=10, directory="assets/puckman_right.png", screen_width=self.screen_width(),
+                                screen_height=self.screen_height())
 
         game_open = True
         while game_open:
@@ -75,15 +77,26 @@ class Game:
 
             keys = pygame.key.get_pressed()
             if keys[pygame.K_RIGHT]:
-                puckman.control(0.5, 0, 'right')
+                self._puckman.control('right')
             if keys[pygame.K_LEFT]:
-                puckman.control(-0.5, 0, 'left')
+                self._puckman.control('left')
             if keys[pygame.K_UP]:
-                puckman.control(0, -0.5, 'up')
+                self._puckman.control('up')
             if keys[pygame.K_DOWN]:
-                puckman.control(0, 0.5, 'down')
+                self._puckman.control('down')
+            if keys[pygame.K_RETURN]:
+                self._puckman.control('stop')
+
+            self.check_for_collisions()
+            self._puckman.go()
 
             self._screen.fill((0, 0, 0))
-            puckman.draw(self._screen)
+            self.draw_everything()
             pygame.display.flip()
         self.close()
+
+    def check_for_collisions(self):
+        for dot in self._dots:
+            if dot.collides_with(self._puckman):
+                self._points += 1
+                self._dots.remove(dot)

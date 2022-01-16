@@ -40,9 +40,9 @@ class Object:
         y = point[1]
         return self.left() <= x <= self.right() and self.top() <= y <= self.down()
 
-    def collides_with_object(self, object):
-        return (self.collides_with_point(object.down()) or self.collides_with_point(object.top()) or
-                self.collides_with_point(object.left()) or self.collides_with_point(object.right()))
+    def collides_with(self, an_object):
+        return (self.left() < an_object.right() and self.right() > an_object.left() and
+                self.top() < an_object.down() and self.down() > an_object.top())
 
     def draw(self, screen):
         screen.blit(self._image, (self._left, self._top))

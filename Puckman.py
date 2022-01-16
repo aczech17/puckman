@@ -2,7 +2,7 @@ from Movable import Movable
 
 
 class Puckman(Movable):
-    def __init__(self, left, top, directory, screen_width, screen_height):
+    def __init__(self, left, top, directory, screen_width, screen_height, speed=0.25):
         self._screen_width = screen_width
         self._screen_height = screen_height
         self._assets = {
@@ -11,15 +11,22 @@ class Puckman(Movable):
             'up': 'assets//puckman_up.png',
             'down': 'assets//puckman_down.png'
         }
-        self._current_direction = 'right'
-        directory = self._assets[self._current_direction]
+        self._current_direction = 'stop'
+        directory = self._assets['right']
+        self._speed = speed
         super().__init__(left, top, directory)
 
-    def control(self, x, y, direction):
-        if direction != self._current_direction:
+    def control(self, direction):
+        if direction != self._current_direction and direction != 'stop':
             asset_directory = self._assets[direction]
             self._image = self.open_image(asset_directory)
-        self.move(x, y)
+        self._current_direction = direction
+
+    def go(self):
+        speed = self._speed
+        velocity = {'left': (-speed, 0), 'right': (speed, 0), 'up': (0, -speed), 'down': (0, speed), 'stop': (0, 0)}
+        self.move(*velocity[self._current_direction])
+
         if self.right() > self._screen_width:
             self.set_position(left=0, top=self.top())
         if self.left() < 0:

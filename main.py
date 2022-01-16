@@ -1,7 +1,3 @@
-import sys
-import subprocess
-import pygame
-
 from Game import Game
 
 
