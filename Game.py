@@ -3,6 +3,8 @@ import pygame
 from Object import Object
 from Puckman import Puckman
 
+from PuckGUI import win_window
+
 
 class Game:
     """
@@ -10,15 +12,16 @@ class Game:
     :param: dots
     """
 
-    def __init__(self, screen_width=800, screen_height=600):
-        self._obstacles = self.generate_obstacles()
-        self._dots = self.generate_dots()
-
+    def __init__(self, screen_width=800, screen_height=600, points=0):
         self._screen_width = screen_width
         self._screen_height = screen_height
         self._screen = None
         self._puckman = None
-        self._points = 0
+
+        self._obstacles = self.generate_obstacles()
+        self._dots = self.generate_dots()
+        self._max_points = len(self._dots)
+        self._points = points
 
     def close(self):
         pygame.display.quit()
@@ -46,18 +49,42 @@ class Game:
     def screen_height(self):
         return self._screen_height
 
+    def is_game_won(self):
+        return self._points == self._max_points
+
     def generate_obstacles(self):
-        obst1 = Object(left=10, top=10, directory="assets//obstacle_horizontal_big.png")
-        obst2 = Object(left=10, top=500, directory="assets//obstacle_horizontal_big.png")
-        obst3 = Object(left=10, top=30, directory="assets//obstacle_vertical_big.png")
-        obst4 = Object(left=790, top=30, directory="assets//obstacle_vertical_big.png")
-        return [obst1, obst2, obst3, obst4]
+        obstacles = []
+        margin = 10
+        obst_up = Object(left=margin, top=margin, directory="assets//obstacle_horizontal_big.png")
+        obstacles.append(obst_up)
+
+        obst_down = Object(left=margin, top=0, directory="assets//obstacle_horizontal_big.png")
+        obst_down.set_position(left=obst_down.left(), top=self.screen_height() - obst_down.down() - margin)
+        obstacles.append(obst_down)
+
+        obstacles.append(Object(left=margin, top=obst_up.down(), directory="assets//obstacle_vertical_small.png"))
+        obstacles.append(
+            Object(left=margin, top=obstacles[-1].down() + 50, directory="assets//obstacle_vertical_small.png"))
+
+        obstacles.append(Object(left=0, top=obst_up.down(),
+                                directory="assets//obstacle_vertical_small.png"))
+        obstacles[-1].set_position(left=obst_up.right() - obstacles[-1].width(), top=obstacles[-1].top())
+
+        obstacles.append(Object(left=obstacles[-1].left(), top=obstacles[-1].down() + 50,
+                                directory="assets//obstacle_vertical_small.png"))
+
+        for ob in obstacles:
+            print(ob.directory())
+        return obstacles
 
     def generate_dots(self):
         dot1 = Object(left=50, top=50, directory="assets/dot.png")
         dot2 = Object(left=100, top=50, directory="assets/dot.png")
         dot3 = Object(left=150, top=100, directory="assets/dot.png")
-        return [dot1, dot2, dot3]
+
+        dots = [dot1, dot2, dot3]
+        self._max_points = len(dots)
+        return dots
 
     def draw_everything(self):
         self._puckman.draw(self._screen)
@@ -76,7 +103,9 @@ class Game:
         self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
         pygame.display.set_caption("Puckman")
 
-        self._puckman = Puckman(left=150, top=150, directory="assets/puckman_right.png", direction='stop', speed=0.25,
+        start_position = (self._obstacles[2].right() + 10, self._obstacles[0].down() + 10)
+        self._puckman = Puckman(left=start_position[0], top=start_position[1],
+                                directory="assets/puckman_right.png", direction='stop', speed=0.5,
                                 screen=self)
 
         game_open = True
@@ -103,6 +132,11 @@ class Game:
             self._screen.fill((0, 0, 0))
             self.draw_everything()
             pygame.display.flip()
+
+            if self.is_game_won():
+                win_window()
+                break
+
         self.close()
 
     def check_for_collisions(self):

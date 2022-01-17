@@ -6,9 +6,13 @@ class Object:
     def __init__(self, left, top, directory):
         self._left = left
         self._top = top
+        self._directory = directory
         self._image = self.open_image(directory)
         self._width = self._image.get_width()
         self._height = self._image.get_height()
+
+    def directory(self):
+        return self._directory
 
     def open_image(self, directory):
         try:
@@ -40,5 +44,12 @@ class Object:
         y = point[1]
         return self.left() <= x <= self.right() and self.top() <= y <= self.down()"""
 
+
+    def set_position(self, left, top):
+        self._left = left
+        self._top = top
+
     def draw(self, screen):
         screen.blit(self._image, (self._left, self._top))
+
+
