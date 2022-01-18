@@ -52,29 +52,59 @@ class Game:
     def is_game_won(self):
         return self._points == self._max_points
 
-    def generate_obstacles(self):
+    """def generate_obstacles(self):
         obstacles = []
         margin = 10
         obst_up = Object(left=margin, top=margin, directory="assets//obstacle_horizontal_big.png")
         obstacles.append(obst_up)
 
-        obst_down = Object(left=margin, top=0, directory="assets//obstacle_horizontal_big.png")
-        obst_down.set_position(left=obst_down.left(), top=self.screen_height() - obst_down.down() - margin)
+        short = obst_up.height()
+        long = obst_up.width()
+
+        obst_down = Object(left=margin, top=self.screen_height() - margin - short,
+                           directory="assets//obstacle_horizontal_big.png")
         obstacles.append(obst_down)
 
+        vertical_gap = 50
+        # 2
         obstacles.append(Object(left=margin, top=obst_up.down(), directory="assets//obstacle_vertical_small.png"))
+        # 3
         obstacles.append(
-            Object(left=margin, top=obstacles[-1].down() + 50, directory="assets//obstacle_vertical_small.png"))
+            Object(left=margin, top=obstacles[-1].down() + vertical_gap, directory="assets//obstacle_vertical_small.png"))
 
-        obstacles.append(Object(left=0, top=obst_up.down(),
+        # 4
+        obstacles.append(Object(left=obst_up.right() - short, top=obst_up.down(),
                                 directory="assets//obstacle_vertical_small.png"))
-        obstacles[-1].set_position(left=obst_up.right() - obstacles[-1].width(), top=obstacles[-1].top())
 
+        # 5
         obstacles.append(Object(left=obstacles[-1].left(), top=obstacles[-1].down() + 50,
                                 directory="assets//obstacle_vertical_small.png"))
 
-        for ob in obstacles:
-            print(ob.directory())
+        return obstacles"""
+
+    def generate_obstacles(self):
+        margin_vertical = 80
+        margin_horizontal = 49
+        small_hor_dir = "assets//obstacle_horizontal_small.png"
+        big_hor_dir = "assets//obstacle_horizontal_big.png"
+        small_ver_dir = "assets//obstacle_vertical_small.png"
+        big_ver_dir = "assets//obstacle_vertical_big.png"
+        obstacles = []
+        # up
+        obstacles.append(Object(left=margin_vertical, top=margin_horizontal, directory=big_hor_dir))
+        obstacles.append(Object(left=margin_vertical + 600, top=margin_horizontal, directory=big_hor_dir))
+        # down
+        obstacles.append(Object(left=margin_vertical, top=margin_horizontal + 630,directory=big_hor_dir))
+        obstacles.append(Object(left=margin_vertical + 600, top=margin_horizontal + 630, directory=big_hor_dir))
+        # left
+        obstacles.append(Object(left=margin_vertical, top=margin_horizontal + 20, directory=small_ver_dir))
+        obstacles.append(Object(left=margin_vertical, top=margin_horizontal + 350, directory=small_ver_dir))
+        # right
+        obstacles.append(Object(left=self.screen_width() - margin_vertical - 20, top=margin_horizontal + 20,
+                                directory=small_ver_dir))
+        obstacles.append(Object(left=self.screen_width() - margin_vertical - 20, top=margin_horizontal + 350,
+                                directory=small_ver_dir))
+
         return obstacles
 
     def generate_dots(self):
@@ -103,9 +133,8 @@ class Game:
         self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
         pygame.display.set_caption("Puckman")
 
-        start_position = (self._obstacles[2].right() + 10, self._obstacles[0].down() + 10)
-        self._puckman = Puckman(left=start_position[0], top=start_position[1],
-                                directory="assets/puckman_right.png", direction='stop', speed=0.5,
+        self._puckman = Puckman(left=100, top=69,
+                                directory="assets/puckman_right.png", direction='stop', speed=1,
                                 screen=self)
 
         game_open = True
