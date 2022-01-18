@@ -18,6 +18,8 @@ class Game:
         self._screen = None
         self._puckman = None
 
+        self._vertical_obstacles = []
+        self._horizontal_obstacles = []
         self._obstacles = self.generate_obstacles()
         self._dots = self.generate_dots()
         self._max_points = len(self._dots)
@@ -32,17 +34,6 @@ class Game:
     def obstacles(self):
         return self._obstacles
 
-    def add_obstacle(self, rectangle):
-        self._obstacles.append(rectangle)
-
-    def is_obstacle(self, point):
-        x = point[0]
-        y = point[1]
-        for obstacle in self._obstacles:
-            if obstacle.collides_with_point(x, y):
-                return True
-        return False
-
     def screen_width(self):
         return self._screen_width
 
@@ -52,60 +43,45 @@ class Game:
     def is_game_won(self):
         return self._points == self._max_points
 
-    """def generate_obstacles(self):
-        obstacles = []
-        margin = 10
-        obst_up = Object(left=margin, top=margin, directory="assets//obstacle_horizontal_big.png")
-        obstacles.append(obst_up)
-
-        short = obst_up.height()
-        long = obst_up.width()
-
-        obst_down = Object(left=margin, top=self.screen_height() - margin - short,
-                           directory="assets//obstacle_horizontal_big.png")
-        obstacles.append(obst_down)
-
-        vertical_gap = 50
-        # 2
-        obstacles.append(Object(left=margin, top=obst_up.down(), directory="assets//obstacle_vertical_small.png"))
-        # 3
-        obstacles.append(
-            Object(left=margin, top=obstacles[-1].down() + vertical_gap, directory="assets//obstacle_vertical_small.png"))
-
-        # 4
-        obstacles.append(Object(left=obst_up.right() - short, top=obst_up.down(),
-                                directory="assets//obstacle_vertical_small.png"))
-
-        # 5
-        obstacles.append(Object(left=obstacles[-1].left(), top=obstacles[-1].down() + 50,
-                                directory="assets//obstacle_vertical_small.png"))
-
-        return obstacles"""
-
     def generate_obstacles(self):
         margin_vertical = 80
         margin_horizontal = 49
-        small_hor_dir = "assets//obstacle_horizontal_small.png"
+        medium_hor_dir = "assets//obstacle_horizontal_medium.png"
         big_hor_dir = "assets//obstacle_horizontal_big.png"
-        small_ver_dir = "assets//obstacle_vertical_small.png"
+        medium_ver_dir = "assets//obstacle_vertical_medium.png"
         big_ver_dir = "assets//obstacle_vertical_big.png"
-        obstacles = []
+        small_hor_dir = "assets//obstacle_horizontal_small.png"
+        small_ver_dir = "assets//obstacle_vertical_small.png"
         # up
-        obstacles.append(Object(left=margin_vertical, top=margin_horizontal, directory=big_hor_dir))
-        obstacles.append(Object(left=margin_vertical + 600, top=margin_horizontal, directory=big_hor_dir))
+        self._horizontal_obstacles.append(Object(left=margin_vertical, top=margin_horizontal, directory=big_hor_dir))
+        self._horizontal_obstacles.append(Object(left=margin_vertical + 600, top=margin_horizontal, directory=big_hor_dir))
         # down
-        obstacles.append(Object(left=margin_vertical, top=margin_horizontal + 630,directory=big_hor_dir))
-        obstacles.append(Object(left=margin_vertical + 600, top=margin_horizontal + 630, directory=big_hor_dir))
+        self._horizontal_obstacles.append(Object(left=margin_vertical, top=margin_horizontal + 650, directory=big_hor_dir))
+        self._horizontal_obstacles.append(Object(left=margin_vertical + 600, top=margin_horizontal + 650, directory=big_hor_dir))
         # left
-        obstacles.append(Object(left=margin_vertical, top=margin_horizontal + 20, directory=small_ver_dir))
-        obstacles.append(Object(left=margin_vertical, top=margin_horizontal + 350, directory=small_ver_dir))
+        self._vertical_obstacles.append(Object(left=margin_vertical, top=margin_horizontal + 20, directory=medium_ver_dir))
+        self._vertical_obstacles.append(Object(left=margin_vertical, top=margin_horizontal + 350, directory=medium_ver_dir))
         # right
-        obstacles.append(Object(left=self.screen_width() - margin_vertical - 20, top=margin_horizontal + 20,
-                                directory=small_ver_dir))
-        obstacles.append(Object(left=self.screen_width() - margin_vertical - 20, top=margin_horizontal + 350,
-                                directory=small_ver_dir))
+        self._vertical_obstacles.append(Object(left=self.screen_width() - margin_vertical - 20, top=margin_horizontal + 20,
+                                directory=medium_ver_dir))
+        self._vertical_obstacles.append(Object(left=self.screen_width() - margin_vertical - 20, top=margin_horizontal + 350,
+                                directory=medium_ver_dir))
+        # top left
+        for i in range(6):
+            for j in range(3):
+                self._horizontal_obstacles.append(
+                    Object(left=margin_vertical + 20 + j * 330, top=margin_horizontal + 20 + i * (30 + 20) + 30,
+                           directory=medium_hor_dir))
 
-        return obstacles
+        # top right
+        margin = self._horizontal_obstacles[-1].right()
+        for i in range(4):
+            self._vertical_obstacles.append(Object(left=margin + i * (20+30), top=margin_horizontal+20, directory=medium_ver_dir))
+
+
+
+
+        return self._horizontal_obstacles + self._vertical_obstacles
 
     def generate_dots(self):
         dot1 = Object(left=50, top=50, directory="assets/dot.png")
