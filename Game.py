@@ -111,6 +111,15 @@ class Game:
                 dots.append(Object(left=obstacle.left() + i * 30, top=obstacle.top() - 20,
                                    directory="assets//dot.png"))
 
+        for obstacle in self._vertical_obstacles[:4]:
+            for i in range(1, 10):
+                dots.append(Object(left=obstacle.right() + 10, top=obstacle.top() + i * 30,
+                                   directory="assets//dot.png"))
+        for obstacle in self._vertical_obstacles[4:]:
+            for i in range(1, 10):
+                dots.append(Object(left=obstacle.left() - 20, top=obstacle.top() + i * 30,
+                                   directory="assets//dot.png"))
+
         self._max_points = len(dots)
         return dots
 
