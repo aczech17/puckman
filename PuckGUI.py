@@ -1,7 +1,7 @@
 import PySimpleGUI as gui
 
 def win_window():
-    layout = [[gui.Text("Brawo! Wygrałeś!!")], [gui.Button("OK")]]
+    layout = [[gui.Text("Brawo! Wygrałeś!")], [gui.Button("OK")]]
     window = gui.Window("Wygrana", layout)
     while True:
         event, values = window.read()

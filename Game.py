@@ -1,5 +1,6 @@
 import pygame
 
+from Movable import Movable
 from Object import Object
 from Puckman import Puckman
 
@@ -24,6 +25,7 @@ class Game:
         self._dots = self.generate_dots()
         self._max_points = len(self._dots)
         self._points = points
+        self._ghosts = self.generate_ghosts()
 
     def close(self):
         pygame.display.quit()
@@ -126,6 +128,8 @@ class Game:
             dot.draw(self._screen)
         for obstacle in self._obstacles:
             obstacle.draw(self._screen)
+        for ghost in self._ghosts:
+            ghost.draw(self._screen)
         myfont = pygame.font.SysFont('Comic Sans MS', 30)
         textsurface = myfont.render(f"Punkty xD: {self._points}", False, (255, 255, 255))
         self._screen.blit(textsurface, (0, 0))
@@ -159,7 +163,7 @@ class Game:
             if keys[pygame.K_RETURN]:
                 self._puckman.control('stop')
 
-            self.check_for_collisions()
+            self.check_for_collisions(self._puckman)
             self._puckman.go()
 
             self._screen.fill((0, 0, 0))
@@ -172,14 +176,20 @@ class Game:
 
         self.close()
 
-    def check_for_collisions(self):
-        puckman = self._puckman
-        for dot in self._dots:
-            if puckman.will_collide_with(dot):
-                self._points += 1
-                self._dots.remove(dot)
+    def check_for_collisions(self, movable):
+        if isinstance(movable, Puckman):
+            for dot in self._dots:
+                if movable.will_collide_with(dot):
+                    self._points += 1
+                    self._dots.remove(dot)
 
         for obstacle in self._obstacles:
-            if puckman.will_collide_with(obstacle):
-                self._puckman.control('stop')
+            if movable.will_collide_with(obstacle):
+                movable.control('stop')
                 break  # ?
+
+    def generate_ghosts(self):
+        ghosts = []
+        ghosts.append(Movable(left=self.obstacles()[-1].right() + 20, top=self.obstacles()[-1].top(),
+                              directory="assets//ghost_blue.png", speed=1))
+        return ghosts
