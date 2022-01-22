@@ -103,9 +103,6 @@ class Game:
 
     def generate_dots(self):
         dots = []
-        margin_vertical = 80
-        margin_horizontal = 49
-        dot_width = 5
         for obstacle in self._horizontal_obstacles:
             for i in range(1, 10):
                 dots.append(Object(left=obstacle.left() + i * 30, top=obstacle.top() - 20,
