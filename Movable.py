@@ -19,6 +19,9 @@ class Movable(Object):
     def horizontal_collision(self, an_object: Object):
         return an_object.left() <= self.left() <= an_object.right() or self.left() <= an_object.left() <= self.right()
 
+    def collides_with(self, an_object):
+        return self.vertical_collision(an_object) and self.horizontal_collision(an_object)
+
     def will_collide_with(self, an_object: Object):
         if self._current_direction == 'stop':
             return False
@@ -45,3 +48,8 @@ class Movable(Object):
         self._left = self._left + x
         self._top = self._top + y
 
+    def set_direction(self, direction):
+        self._current_direction = direction
+
+    def direction(self):
+        return self._current_direction

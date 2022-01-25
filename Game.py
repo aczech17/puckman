@@ -1,10 +1,11 @@
 import pygame
 
+from Ghost import Ghost
 from Movable import Movable
 from Object import Object
 from Puckman import Puckman
 
-from PuckGUI import win_window
+from PuckGUI import win_window, lose_window
 
 
 class Game:
@@ -141,6 +142,7 @@ class Game:
         self._screen = pygame.display.set_mode((self._screen_width, self._screen_height))
         pygame.display.set_caption("Puckman")
 
+
         self._puckman = Puckman(left=100, top=69,
                                 directory="assets/puckman_right.png", direction='stop', speed=1,
                                 screen=self)
@@ -166,13 +168,20 @@ class Game:
             self.check_for_collisions(self._puckman)
             self._puckman.go()
 
+            if self.collides_with_ghost():
+                lose_window()
+                game_open = False
+
+            for ghost in self._ghosts:
+                ghost.go(self._obstacles)
+
             self._screen.fill((0, 0, 0))
             self.draw_everything()
             pygame.display.flip()
 
             if self.is_game_won():
                 win_window()
-                break
+                game_open = False
 
         self.close()
 
@@ -188,8 +197,21 @@ class Game:
                 movable.control('stop')
                 break  # ?
 
+    def collides_with_ghost(self):
+        for ghost in self._ghosts:
+            if self._puckman.collides_with(ghost):
+                return True
+        return False
+
     def generate_ghosts(self):
         ghosts = []
-        ghosts.append(Movable(left=self.obstacles()[-1].right() + 20, top=self.obstacles()[-1].top(),
-                              directory="assets//ghost_blue.png", speed=1))
+        ghosts.append(Ghost(left=self.obstacles()[-1].right() + 20, top=self.obstacles()[-1].top(),
+                            directory="assets//ghost_blue.png", speed=1, direction='stop', screen=self))
+        ghosts.append(Ghost(left=self._horizontal_obstacles[-6].right() + 20, top=self._horizontal_obstacles[-6].top(),
+                            directory="assets//ghost_red.png", speed=1, direction='stop', screen=self))
+        ghosts.append(Ghost(left=self._vertical_obstacles[-1].right() + 20, top=self._vertical_obstacles[-1].top(),
+                            directory="assets//ghost_pink.png", speed=1, direction='stop', screen=self))
+        ghosts.append(
+            Ghost(left=self._vertical_obstacles[-1].right() + 20, top=self._vertical_obstacles[-1].down() - 20,
+                  directory="assets//ghost_yellow.png", speed=1, direction='stop', screen=self))
         return ghosts
